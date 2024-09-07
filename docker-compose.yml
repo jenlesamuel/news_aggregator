@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # backend
+  backend:
+    build:
+      context: ./backend
+    container_name: laravel-backend
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - news-network
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=news
+      - DB_USERNAME=news_admin
+      - DB_PASSWORD=news_admin_password
+    ports:
+      - "9000:9000"
+
+  # MySQL service
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+    environment:
+      # MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: news
+      MYSQL_USER: news_admin
+      MYSQL_PASSWORD: news_admin_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - news-network
+
+  # frontend
+  frontend:
+    build:
+      context: ./frontend
+    container_name: react-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - news-network
+    depends_on:
+      - backend
+
+networks:
+  news-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
