@@ -40,7 +40,7 @@ class NewsApiScraper implements ScraperInterface
                         'author' => $apiArticle['author'],
                         'source' => $apiArticle['source']['name'],
                         'category' => $apiArticle['category'] ?? '',
-                        'date_published' => $apiArticle['publishedAt'],
+                        'published_at' => $apiArticle['publishedAt'],
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
