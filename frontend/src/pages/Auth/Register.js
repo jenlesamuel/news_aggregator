@@ -44,6 +44,8 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError('');
+    
     if (validateForm()) {
       try {
         await api.post('/register', formData);

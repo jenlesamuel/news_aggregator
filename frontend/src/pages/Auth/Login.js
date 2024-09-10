@@ -34,11 +34,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError('');
     if (validateForm()) {
       try {
         await login(formData.email, formData.password);
-        navigate("/feed");
+        navigate("/search");
       } catch (error) {
+
         setServerError(`An error occurred: ${error.code}`);
       }
     }

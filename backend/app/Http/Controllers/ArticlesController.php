@@ -13,6 +13,7 @@ class ArticlesController extends Controller
         $category = $request->input('category');
         $source = $request->input('source');
         $date = $request->input('date');
+        $currentPage = $request->input('page');
 
         $query = Article::query();
         if ($keyword) {
@@ -32,11 +33,11 @@ class ArticlesController extends Controller
             $query->WhereDate('published_at', $date);
         }
 
-        $articles = $query->paginate();
+        $articles = $query->paginate(15, ['*'], 'page', $currentPage);
 
         return response()->json([
             'status' => 'success',
-            'message' => count($articles) > 0 ? 'Articles fetched' : 'No article found',
+            'message' => 'ok',
             'articles' => $articles,
         ]);
     }
