@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class LoginController extends Controller
+class AuthController extends Controller
 {
     public function login(Request $request) {
         $credentials = $request->only("email","password");
@@ -23,6 +23,16 @@ class LoginController extends Controller
             'status' => 'success',
             'token' => $token,
             'user' => auth()->user(),
+        ]);
+    }
+
+    public function logout()
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+
+        return response()->json([
+            'status'=> 'success',
+            'message' => 'Successfully logged out',
         ]);
     }
 }

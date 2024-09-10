@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\ArticlesController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\PreferenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +25,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function() {
     Route::post('/register', [RegisterController::class, 'register']);
-    Route::post('/login', [LoginController::class, 'login']);
-    Route::middleware('jwt.auth')->get('/articles/search', [ArticlesController::class, 'search']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth.jwt')->group(function() {
+        Route::get('/articles/search', [ArticlesController::class, 'search']);
+        Route::get('/preferences', [PreferenceController::class, 'getPreferences']);
+        Route::post('/preferences', [PreferenceController::class, 'updatePreferences']);
+        Route::get('/preferences/options', [PreferenceController::class, 'getPreferencesOptions']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
 });
 
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Services\UserService;
+use App\Repository\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,11 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RegisterController extends Controller
 {      
-    private $userService;
+    private $userRepository;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->userService = $userService;
+        $this->userRepository = $userRepository;
     }
 
     public function register(Request $request)
@@ -39,7 +39,7 @@ class RegisterController extends Controller
             'password' => Hash::make($request->input('password')),
         ];
 
-        $user = $this->userService->registerUser($userData);
+        $user = $this->userRepository->create($userData);
 
         return response()->json([
             'status' => 'success',

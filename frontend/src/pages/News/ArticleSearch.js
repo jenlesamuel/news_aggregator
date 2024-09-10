@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { TextField, Button, Box, MenuItem, Typography, CircularProgress, Pagination } from '@mui/material';
 import api from '../../services/api';
 import { HttpStatusCode } from 'axios';
@@ -44,15 +44,12 @@ const ArticleSearch = () => {
     await fetchData(value);
   };
 
-  const handleSearch = async () => {
-    await fetchData(1)
-  }
 
   return (
     <Box>
       {loading && <CircularProgress />}
       {error && <Typography>{error}</Typography>}
-      {/* Keyword Search */}
+      
       <TextField 
         label="Search Articles" 
         value={keyword} 
@@ -61,7 +58,6 @@ const ArticleSearch = () => {
         margin="normal"
       />
 
-      {/* Category Filter */}
       <TextField
         select
         label="Category"
@@ -112,7 +108,7 @@ const ArticleSearch = () => {
 
             <Pagination
               count={totalPages}
-              page={currentPage} // Ensure page is always controlled
+              page={currentPage} 
               onChange={async(e, v) => await handlePageChange(e, v)}
               color="primary"
               sx={{ mt: 2 }}

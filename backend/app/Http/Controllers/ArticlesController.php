@@ -3,10 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Repository\ArticleRepository;
 use Illuminate\Http\Request;
 
 class ArticlesController extends Controller
-{
+{   
+    
+    protected $articleRepository;
+
+    public function __construct(ArticleRepository $articleRepository)
+    {
+        $this->middleware('auth.jwt');
+        $this->articleRepository = $articleRepository;
+    }
+
     public function search(Request $request)
     {
         $keyword = $request->input('keyword');
@@ -15,25 +25,8 @@ class ArticlesController extends Controller
         $date = $request->input('date');
         $currentPage = $request->input('page');
 
-        $query = Article::query();
-        if ($keyword) {
-            $query->where('title', 'like', "%{$keyword}%")
-                ->orWhere('content','like', "%{$keyword}%");
-        }
-
-        if ($category) {
-            $query->where('category', $category);
-        }
-
-        if ($source) {
-            $query->where('source', $source);
-        }
-
-        if ($date) {
-            $query->WhereDate('published_at', $date);
-        }
-
-        $articles = $query->paginate(15, ['*'], 'page', $currentPage);
+        $articles = $this->articleRepository->getArticles(
+            $keyword, $category, $source, $date, intval($currentPage));
 
         return response()->json([
             'status' => 'success',
