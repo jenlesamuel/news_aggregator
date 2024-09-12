@@ -51,7 +51,15 @@ This will set up the following docker services:
 - **db** (MySQL): Accessible at `localhost:3306`
 - **webserver** (Nginx): Accessible at `http://localhost:8000`
 
-### 4. Run Migrations
+### 4. Install Laravel Dependencies
+
+After the containers are up, run the Laravel migrations to set up the database schema.
+
+```bash
+docker-compose exec backend composer install
+```
+
+### 5. Run Migrations
 
 After the containers are up, run the Laravel migrations to set up the database schema.
 
@@ -59,7 +67,7 @@ After the containers are up, run the Laravel migrations to set up the database s
 docker-compose exec backend php artisan migrate
 ```
 
-### 5. JWT Secret Generation (Optional)
+### 6. JWT Secret Generation (Optional)
 
 The `.env.example` file already contains a JWT secret which would suffice to run the application. However, you can generate a new JWT secret for the Laravel application by running the command below:
 
@@ -67,21 +75,20 @@ The `.env.example` file already contains a JWT secret which would suffice to run
 docker-compose exec backend php artisan jwt:secret
 ```
 
-### 6. Accessing the Application
+### 7. Accessing the Application
+Access the application at : `http://localhost:3000`
 
-- **Frontend**: `http://localhost:3000`
-- **Backend (API)**: `http://localhost:9000`
+### 8. Populate News Articles by Running The Laravel Scheduler 
 
-### 7. Running Laravel Scheduler (Optional)
-
-The `backend` service already has cron configured inside its container and a cron entry to run Laravel's scheduled tasks. However, to run the Laravel scheduler manually, run the command below: 
+To run the Laravel scheduler manually, run the command below: 
 
 ```bash
 docker-compose exec backend php artisan schedule:run
 ```
+This command will run the task once. Run the command multiple times to populate more articles.
 
 
-### 8. Stopping the Application
+### 9. Stopping the Application
 
 To stop all running containers:
 
@@ -93,5 +100,3 @@ docker-compose down
 
 - **Database Issues**: Ensure that the MySQL service is running, and the `.env` database credentials match the ones in your `docker-compose.yml`file. The file is located at the root of the project folder.
 
-- **API Rate Limits**: NewsAPI.org, New York Times, and The Guardian APIs have rate limits. 
-The scheduled task to scrape news articles has been configured to run every 3 minutes. This was arrived at using the Guardian API as a base. The API allows for only 500 requests per day which approximates to one request every 3 minutes. Other endpoints have no such limit.

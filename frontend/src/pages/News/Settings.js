@@ -66,10 +66,6 @@ const Settings = () => {
     }
   };
 
-  const disableSubmit = () => {
-    return selectedSources.length == 0 && selectedCategories.length == 0 && selectedAuthors.length == 0;
-  }
-
   return (
     <Box sx={{ maxWidth: 600, margin: 'auto', mt: 5 }}>
      {loading && <CircularProgress />}
@@ -135,7 +131,7 @@ const Settings = () => {
         ))}
       </TextField>
 
-      <Button variant="contained" color="primary" disabled={disableSubmit} onClick={handleSubmit} sx={{ mt: 3 }}>
+      <Button variant="contained" color="primary"  onClick={handleSubmit} sx={{ mt: 3 }}>
         Save Preferences
       </Button>
     </Box>

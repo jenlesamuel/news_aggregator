@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    cron
+    cron \
+    nano
 
 # Clear the package cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -32,14 +33,8 @@ COPY . .
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
-# Copy the schedule-runner.sh into the container
-COPY ./docker/cron/schedule-runner.sh /usr/local/bin/schedule-runner.sh
-
-# Add the cron job
-RUN (crontab -l ; echo "* * * * * /usr/local/bin/schedule-runner.sh") | crontab -
-
 # Expose port 9000
 EXPOSE 9000
 
 # Start PHP-FPM
-CMD cron && php-fpm
+CMD ["php-fpm"]
