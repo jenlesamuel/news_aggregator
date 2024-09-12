@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { HttpStatusCode } from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -39,9 +40,9 @@ const Login = () => {
         navigate("/");
       } catch (error) {
         if (error.status === HttpStatusCode.Unauthorized) {
-          setError("Invalid email/password");
+          setServerError("Invalid email/password");
         } else {
-          setError(`An error occurred: ${error.code}`);
+          setServerError(`An error occurred: ${error.code}`);
         }
       }
     }
