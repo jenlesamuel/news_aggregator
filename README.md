@@ -31,7 +31,7 @@ cd news_aggregator
 ### 2. Copy `.env.example` to `.env`
 
 ```bash
-cp .env.example .env
+cp backend/.env.example backend/.env
 ```
 The `.env.example` file contains all the environment variables that can be used to run the application. Some of these values are secrets, but they are included in this repo solely for the sake of this demo project.
 
