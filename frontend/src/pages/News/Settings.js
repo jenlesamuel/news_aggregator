@@ -44,6 +44,9 @@ const Settings = () => {
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
+      setError('');
+      
       await api.post(
         '/preference',
         {
@@ -55,8 +58,11 @@ const Settings = () => {
       
       navigate('/');
     } catch (error) {
-      console.error("Error updating preference", error);
-      alert("Failed to update preference");
+      if (error.status === HttpStatusCode.Unauthorized) {
+        logout();
+      } else {
+        setError(`An error occurred: ${error.code}`);
+      }
     }
   };
 
