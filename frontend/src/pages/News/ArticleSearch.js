@@ -1,10 +1,13 @@
-import { useState } from 'react';
-import { TextField, Button, Box, MenuItem, Typography, CircularProgress, Pagination } from '@mui/material';
+import { useContext, useState, useEffect } from 'react';
+import { TextField, Button, Box, MenuItem, Typography, CircularProgress, Pagination, Card, CardContent } from '@mui/material';
 import api from '../../services/api';
 import { HttpStatusCode } from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
+import { v4 as uuidv4 } from 'uuid';
+import { Link } from 'react-router-dom';
 
 const ArticleSearch = () => {
+  const { logout }= useContext(AuthContext);
   const [keyword, setKeyword] = useState('');
   const [category, setCategory] = useState('');
   const [source, setSource] = useState('');
@@ -14,8 +17,31 @@ const ArticleSearch = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [sources, setSources] = useState([]);
+  const [categories, setCategories] = useState([]);
 
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const response = await api.get('/preference/options');
+
+        setSources(response.data.sources);
+        setCategories(response.data.categories);
+      } catch (error) {
+        if (error.status === HttpStatusCode.Unauthorized) {
+          logout();
+        } else {
+          setError(`An error occurred: ${error.code}`);
+        }
+      }finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOptions();
+  }, [logout]);
 
   const fetchData = async (page) => {
     try {
@@ -31,7 +57,7 @@ const ArticleSearch = () => {
       setTotalPages(response.data.articles.last_page);
     } catch (error) {
       if (error.status === HttpStatusCode.Unauthorized) {
-        navigate("/login");
+        logout();
       } else {
         setError(`An error occurred: ${error.code}`);
       }
@@ -43,7 +69,6 @@ const ArticleSearch = () => {
   const handlePageChange = async (event, value) => {
     await fetchData(value);
   };
-
 
   return (
     <Box>
@@ -60,25 +85,35 @@ const ArticleSearch = () => {
 
       <TextField
         select
-        label="Category"
+        label="Select Category"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
         fullWidth
+        variant="outlined"
         margin="normal"
       >
-        <MenuItem value="technology">Technology</MenuItem>
-        <MenuItem value="business">Business</MenuItem>
-        <MenuItem value="health">Health</MenuItem>
-        
-      </TextField>
+        {categories.map((category) => (
+          <MenuItem key={uuidv4()} value={category}>
+            {category}
+          </MenuItem>
+        ))}
+      </TextField>   
 
-      <TextField
-        label="Source"
+    <TextField
+        select
+        label="Select Source"
         value={source}
         onChange={(e) => setSource(e.target.value)}
         fullWidth
+        variant="outlined"
         margin="normal"
-      />
+      >
+        {sources.map((source) => (
+          <MenuItem key={uuidv4()} value={source}>
+            {source}
+          </MenuItem>
+        ))}
+      </TextField>    
 
       <TextField
         label="Date"
@@ -92,31 +127,44 @@ const ArticleSearch = () => {
         margin="normal"
       />
 
-      <Button onClick={async() => await fetchData(1)} variant="contained" color="primary" fullWidth>
+      <Button onClick={async() => await fetchData(1)} disabled={loading} variant="contained" color="primary" fullWidth>
         Search
       </Button>
 
       <Box marginTop={2}>
-      {articles.length ? (
-          <>
-            {articles.map(article => (
-              <div key={article.id}>
-                <h3>{article.title}</h3>
-                <p>{article.content}</p>
-              </div>
+        {articles.length > 0 ? (
+          <Box>
+            {articles.map((article) => (
+              <Card key={article.id} variant="outlined" sx={{ mb: 2 }}>
+                <CardContent>
+                  <Typography variant="h5">
+                    <Link
+                        to={article.web_url}
+                        style={{ textDecoration: 'none' }}
+                        target="_blank"                   
+                        rel="noopener noreferrer">
+                          {article.title}
+                      </Link>
+                    </Typography>
+                  <Typography variant="body2" color="textSecondary" gutterBottom>
+                    {article.author} | {article.category} | {article.source}
+                  </Typography>
+                  <Typography variant="body1">{article.content}</Typography>
+                </CardContent>
+              </Card>
             ))}
 
             <Pagination
               count={totalPages}
-              page={currentPage} 
+              page={currentPage}
               onChange={async(e, v) => await handlePageChange(e, v)}
               color="primary"
               sx={{ mt: 2 }}
             />
-          </>
-        ) : (
-          <p>No articles found</p>
-        )}
+          </Box>
+      ) : (
+        !loading && <Typography>No articles found.</Typography>
+      )}
       </Box>
       
     </Box>

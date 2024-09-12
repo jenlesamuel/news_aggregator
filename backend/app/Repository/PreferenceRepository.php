@@ -2,19 +2,20 @@
 
 namespace App\Repository;
 use App\Models\Article;
+use App\Models\Preference;
 use App\Models\User;
 
 class PreferenceRepository 
 {   
-    public function getPreferences(User $user)
+    public function getPreference(User $user):?Preference
     {
-        return $user->preferences;
+        return $user->preference;
     }
 
-    public function updateOrCreate(User $user, array $preferences)
+    public function updateOrCreate(User $user, array $preference)
     {   
-        return $user->preferences()->updateOrCreate(
-            ['user_id' => $user->id], $preferences
+        return $user->preference()->updateOrCreate(
+            ['user_id' => $user->id], $preference
         );
     }
 }

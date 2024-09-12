@@ -22,10 +22,10 @@ class PreferenceController extends Controller
         $this->articleRepository = $articleRepository;
     }
 
-    public function getPreferences()
+    public function getPreference()
     {
         $user = JWTAuth::parseToken()->authenticate(); 
-        $preferences = $this->peferenceRepository->getPreferences($user); 
+        $preferences = $this->peferenceRepository->getPreference($user); 
 
         if (!$preferences) {
             return response()->json([
@@ -42,7 +42,7 @@ class PreferenceController extends Controller
     }
 
     
-    public function updatePreferences(Request $request)
+    public function updatePreference(Request $request)
     {
         $validated = $request->validate([
             'sources' => 'nullable|array',
@@ -52,7 +52,7 @@ class PreferenceController extends Controller
 
         $user = JWTAuth::parseToken()->authenticate();
 
-        $preferences = $this->peferenceRepository->updateOrCreate(
+        $preference = $this->peferenceRepository->updateOrCreate(
             $user,
             [
                 'sources' => $validated['sources'] ?? [],
@@ -64,11 +64,11 @@ class PreferenceController extends Controller
         return response()->json([
             'status'=> 'success',
             'message' => 'Preferences updated successfully', 
-            'preferences' => $preferences],
+            'preference' => $preference],
         );
     }
 
-    public function getPreferencesOptions()
+    public function getPreferenceOptions()
     {
         return $this->articleRepository->getOptions();
     }

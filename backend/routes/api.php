@@ -27,10 +27,11 @@ Route::prefix('v1')->group(function() {
     Route::post('/register', [RegisterController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::middleware('auth.jwt')->group(function() {
+        Route::get('/newsfeed', [ArticlesController::class, 'getUserNewsfeed']);
         Route::get('/articles/search', [ArticlesController::class, 'search']);
-        Route::get('/preferences', [PreferenceController::class, 'getPreferences']);
-        Route::post('/preferences', [PreferenceController::class, 'updatePreferences']);
-        Route::get('/preferences/options', [PreferenceController::class, 'getPreferencesOptions']);
+        Route::get('/preference', [PreferenceController::class, 'getPreference']);
+        Route::post('/preference', [PreferenceController::class, 'updatePreference']);
+        Route::get('/preference/options', [PreferenceController::class, 'getPreferenceOptions']);
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 });

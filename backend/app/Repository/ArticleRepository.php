@@ -2,10 +2,11 @@
 
 namespace App\Repository;
 use App\Models\Article;
+use App\Models\Preference;
 
 class ArticleRepository 
 {   
-    public function getArticles(string $keyword, string $category, string $source, string $date, int $page)
+    public function getArticles(?string $keyword, ?string $category, ?string $source, ?string $date, int $page)
     {
         $query = Article::query();
         if ($keyword) {
@@ -39,5 +40,24 @@ class ArticleRepository
             'categories' => Article::distinct()->pluck('category'),
             'sources' => Article::distinct()->pluck('source'),
         ];
+    }
+
+    public function getUserArticles(?Preference $preference, $page)
+    {
+        $query = Article::query();
+
+        if (!empty($preference->sources)) {
+            $query->whereIn('source', $preference->sources);
+        }
+
+        if (!empty($preference->authors)) {
+            $query->whereIn('author', $preference->authors);
+        }
+
+        if (!empty($preference->categories)) {
+            $query->whereIn('category', $preference->categories);
+        }
+
+        return $query->paginate(15, ['*'], 'page', $page);
     }
 }

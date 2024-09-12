@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Button, TextField, MenuItem, Typography, CircularProgress } from '@mui/material';
 import { HttpStatusCode } from 'axios';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { AuthContext } from '../../context/AuthContext';
 
-const Preferences = () => {
+const Settings = () => {
+  const { logout } = useContext(AuthContext);
   const [sources, setSources] = useState([]);
   const [categories, setCategories] = useState([]);
   const [authors, setAuthors] = useState([]);
@@ -21,14 +23,14 @@ const Preferences = () => {
       try {
         setLoading(true);
         setError('');
-        const response = await api.get('/preferences/options');
+        const response = await api.get('/preference/options');
 
         setSources(response.data.sources);
         setCategories(response.data.categories);
         setAuthors(response.data.authors);
       } catch (error) {
         if (error.status === HttpStatusCode.Unauthorized) {
-          navigate("/login");
+          logout();
         } else {
           setError(`An error occurred: ${error.code}`);
         }
@@ -38,12 +40,12 @@ const Preferences = () => {
     };
 
     fetchOptions();
-  }, [navigate]);
+  }, [navigate, logout]);
 
   const handleSubmit = async () => {
     try {
       await api.post(
-        '/preferences',
+        '/preference',
         {
           sources: selectedSources,
           categories: selectedCategories,
@@ -51,12 +53,16 @@ const Preferences = () => {
         }
       );
       
-      navigate('/feed');
+      navigate('/');
     } catch (error) {
-      console.error("Error updating preferences", error);
-      alert("Failed to update preferences");
+      console.error("Error updating preference", error);
+      alert("Failed to update preference");
     }
   };
+
+  const disableSubmit = () => {
+    return selectedSources.length == 0 && selectedCategories.length == 0 && selectedAuthors.length == 0;
+  }
 
   return (
     <Box sx={{ maxWidth: 600, margin: 'auto', mt: 5 }}>
@@ -123,11 +129,11 @@ const Preferences = () => {
         ))}
       </TextField>
 
-      <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 3 }}>
+      <Button variant="contained" color="primary" disabled={disableSubmit} onClick={handleSubmit} sx={{ mt: 3 }}>
         Save Preferences
       </Button>
     </Box>
   );
 };
 
-export default Preferences;
+export default Settings;

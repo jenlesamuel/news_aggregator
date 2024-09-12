@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # backend
+
   backend:
     build:
       context: ./backend
@@ -22,8 +22,9 @@ services:
       - "9000:9000"
     depends_on:
       - db
+    command: >
+      sh -c "cron && php-fpm"
 
-  # MySQL service
   db:
     image: mysql:8.0
     container_name: mysql-db
@@ -40,8 +41,7 @@ services:
     networks:
       - news-network
 
-   # Nginx service
-  nginx:
+  webserver:
     image: nginx:alpine
     container_name: nginx-webserver
     restart: unless-stopped
@@ -55,17 +55,18 @@ services:
     depends_on:
       - backend
 
-  # frontend
   frontend:
     build:
       context: ./frontend
     container_name: react-frontend
     ports:
       - "3000:80"
+    volumes:
+      - ./frontend/docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
       - news-network
     depends_on:
-      - nginx
+      - webserver
 
 networks:
   news-network:

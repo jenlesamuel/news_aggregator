@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Repository\ArticleRepository;
+use App\Services\GuardianScraper;
 use App\Services\NewsApiScraper;
+use App\Services\NewYorkTimesScraper;
 use App\Services\ScrapingManager;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,7 +20,9 @@ class AppServiceProvider extends ServiceProvider
             $articleRepository = new ArticleRepository();
 
             return new ScrapingManager([
-                new NewsApiScraper($articleRepository)
+                new NewsApiScraper($articleRepository),
+                new NewYorkTimesScraper($articleRepository),
+                new GuardianScraper($articleRepository),
             ]);
         });
     }

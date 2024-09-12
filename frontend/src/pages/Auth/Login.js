@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,14 +16,12 @@ const Login = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Validate email
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
 
-    // Validate password
     if (!formData.password) {
       newErrors.password = "Password is required";
     }
@@ -38,7 +36,7 @@ const Login = () => {
     if (validateForm()) {
       try {
         await login(formData.email, formData.password);
-        navigate("/search");
+        navigate("/");
       } catch (error) {
 
         setServerError(`An error occurred: ${error.code}`);
@@ -74,6 +72,14 @@ const Login = () => {
           Login
         </Button>
       </form>
+      <Box mt={2} textAlign="center">
+        <Typography variant="body2">
+          Not registered?{' '}
+          <Link to="/register" underline="hover">
+            Sign up here
+          </Link>
+        </Typography>
+      </Box>
     </Box>
   );
 };
