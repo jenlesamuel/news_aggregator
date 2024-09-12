@@ -80,12 +80,11 @@ Access the application at : `http://localhost:3000`
 
 ### 8. Populate News Articles by Running The Laravel Scheduler 
 
-To run the Laravel scheduler manually, run the command below: 
+The `backend` service already has cron configured inside its container and a cron entry to run Laravel's scheduled tasks to scrape news. However, to run the Laravel scheduler manually, run the command below: 
 
 ```bash
 docker-compose exec backend php artisan schedule:run
 ```
-This command will run the task once. Run the command multiple times to populate more articles.
 
 
 ### 9. Stopping the Application
@@ -99,4 +98,5 @@ docker-compose down
 ## Troubleshooting
 
 - **Database Issues**: Ensure that the MySQL service is running, and the `.env` database credentials match the ones in your `docker-compose.yml`file. The file is located at the root of the project folder.
+
 

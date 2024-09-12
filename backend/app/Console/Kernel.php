@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('app:scrape-news')->everyMinute();
+        $schedule->command('app:scrape-news')->everyTwoMinutes();
     }
 
     /**

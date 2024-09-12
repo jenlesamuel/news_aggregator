@@ -33,8 +33,15 @@ COPY . .
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
+COPY ./docker/cron/schedule-runner.sh /etc/cron.d/schedule-runner.sh
+
+RUN chmod 0644 /etc/cron.d/schedule-runner.sh && crontab /etc/cron.d/schedule-runner.sh
+
+COPY ./docker/entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
 # Expose port 9000
 EXPOSE 9000
 
-# Start PHP-FPM
-CMD ["php-fpm"]
+ENTRYPOINT ["/entrypoint.sh"]

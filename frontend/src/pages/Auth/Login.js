@@ -38,8 +38,11 @@ const Login = () => {
         await login(formData.email, formData.password);
         navigate("/");
       } catch (error) {
-
-        setServerError(`An error occurred: ${error.code}`);
+        if (error.status === HttpStatusCode.Unauthorized) {
+          setError("Invalid email/password");
+        } else {
+          setError(`An error occurred: ${error.code}`);
+        }
       }
     }
   };
