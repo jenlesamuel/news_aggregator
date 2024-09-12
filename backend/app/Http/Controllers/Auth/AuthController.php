@@ -16,7 +16,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid credentials',
-            ], Response::HTTP_BAD_REQUEST);
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         return response()->json([
